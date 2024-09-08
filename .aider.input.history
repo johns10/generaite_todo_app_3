@@ -145,3 +145,66 @@
 
 # 2024-09-08 14:24:02.568963
 +/run cargo build
+
+# 2024-09-08 14:26:21.710001
++In the web/src directory, create a new file named server.rs.
++Open server.rs in your text editor.
++Add the following content:
++
++rustCopyuse crate::{router, AppState};
++use axum::Router;
++use domain::repository::Repository;
++use tera::Tera;
++
++pub fn create_app(repository: Repository) -> anyhow::Result<Router> {
++    let templates = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*"))
++        .expect("Tera initialization failed");
++    let state = AppState::new(repository, templates);
++    Ok(router::create_router(state))
++}
++
++pub async fn start(app: Router, host: &str, port: u16) -> anyhow::Result<()> {
++    let server_url = format!("{host}:{port}");
++    let listener = tokio::net::TcpListener::bind(&server_url).await?;
++    axum::serve(listener, app).await?;
++    Ok(())
++}
++
+
+# 2024-09-08 14:27:43.831978
++/run cargo update
+
+# 2024-09-08 14:27:46.886923
++/run cargo build
+
+# 2024-09-08 14:29:29.785073
++In the web/src directory, create a new file named app_state.rs.
++Open app_state.rs in your text editor.
++Add the following content:
++
++rustCopyuse domain::repository::Repository;
++use std::sync::Arc;
++use tera::Tera;
++
++pub struct AppState {
++    pub repository: Arc<Repository>,
++    pub templates: Tera,
++}
++
++impl AppState {
++    pub fn new(repository: Repository, templates: Tera) -> Self {
++        Self {
++            repository: Arc::new(repository),
++            templates,
++        }
++    }
++}
++
++impl Clone for AppState {
++    fn clone(&self) -> Self {
++        Self {
++            repository: Arc::clone(&self.repository),
++            templates: self.templates.clone(),
++        }
++    }
++}
