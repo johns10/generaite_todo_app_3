@@ -1,8 +1,9 @@
 use chrono::{DateTime, Utc};
+use entity::user;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct User {
     pub id: Uuid,
     pub username: String,
@@ -12,34 +13,19 @@ pub struct User {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct CreateUserDto {
+pub struct UserForm {
     pub username: String,
     pub email: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct UpdateUserDto {
-    pub username: Option<String>,
-    pub email: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct UserDto {
-    pub id: Uuid,
-    pub username: String,
-    pub email: String,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
-}
-
-impl From<User> for UserDto {
-    fn from(user: User) -> Self {
+impl From<user::Model> for User {
+    fn from(model: user::Model) -> Self {
         Self {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            created_at: user.created_at,
-            updated_at: user.updated_at,
+            id: model.id,
+            username: model.username,
+            email: model.email,
+            created_at: model.created_at,
+            updated_at: model.updated_at,
         }
     }
 }

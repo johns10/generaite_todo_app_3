@@ -293,3 +293,6 @@
 
 # 2024-09-08 16:40:26.879666
 +/run cargo test --workspace
+
+# 2024-09-08 17:17:09.583807
++Create a domain model for the user. Place it in domain/src/user/model.rs. Use the included example for reference. Note that this model should have no reliance on sea orm, and is intended to be used in the application instead of the database entity. https://github.com/johns10/axum_example/blob/main/domain/src/post/model.rs
