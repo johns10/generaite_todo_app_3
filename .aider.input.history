@@ -265,3 +265,13 @@
 +
 +    (StatusCode::SEE_OTHER, header)
 +}
+
+# 2024-09-08 14:36:53.894404
++/add domain/src/repository.rs
+
+# 2024-09-08 14:36:59.953338
++/add web/src/server.rs
+
+# 2024-09-08 14:37:26.459975
++Update the src/main.rs file to create app_state and start the web server 
++https://github.com/johns10/axum_example/blob/main/src/main.rs
