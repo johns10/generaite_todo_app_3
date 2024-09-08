@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDateTime, Utc};
 use entity::user;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -24,8 +24,12 @@ impl From<user::Model> for User {
             id: model.id,
             username: model.username,
             email: model.email,
-            created_at: model.created_at,
-            updated_at: model.updated_at,
+            created_at: naive_to_utc(model.created_at),
+            updated_at: naive_to_utc(model.updated_at),
         }
     }
+}
+
+fn naive_to_utc(naive: NaiveDateTime) -> DateTime<Utc> {
+    DateTime::<Utc>::from_naive_utc_and_offset(naive, Utc)
 }
