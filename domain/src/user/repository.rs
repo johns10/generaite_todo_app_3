@@ -78,6 +78,7 @@ impl UserRepository for UserRepositoryImpl {
             .await
             .map(|res| res.rows_affected)
             .map_err(UserRepositoryError::from);
+        result
     }
 
     async fn list(&self) -> Result<Vec<User>, UserRepositoryError> {

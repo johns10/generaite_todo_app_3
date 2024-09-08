@@ -373,3 +373,15 @@
 
 # 2024-09-08 18:57:57.124775
 +/run cargo test --workspace
+
+# 2024-09-08 19:09:43.906713
++/ls
+
+# 2024-09-08 19:09:50.650983
++/add domain/src/user/repository.rs
+
+# 2024-09-08 19:09:53.905321
++/add domain/src/user/model.rs
+
+# 2024-09-08 19:21:21.609676
++/test cargo test

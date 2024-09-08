@@ -1,15 +1,15 @@
-use crate::user::repository::UserRepository;
+use crate::user::repository::{UserRepository, UserRepositoryImpl};
 use sea_orm::DatabaseConnection;
 use std::sync::Arc;
 
 pub struct Repository {
-    pub user: UserRepository,
+    pub user: Arc<dyn UserRepository + Send + Sync>,
 }
 
 impl Repository {
     pub fn new(conn: Arc<DatabaseConnection>) -> Self {
         Self {
-            user: UserRepository::new(Arc::clone(&conn)),
+            user: Arc::new(UserRepositoryImpl::new(conn)),
         }
     }
 }
