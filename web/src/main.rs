@@ -1,28 +1,34 @@
-use axum::Server;
-use std::net::SocketAddr;
 use std::sync::Arc;
+use domain::repository::Repository;
+use tera::Tera;
 
 mod router;
+mod server;
 
 #[derive(Clone)]
 pub struct AppState {
-    // Add any shared state here
+    repository: Arc<Repository>,
+    templates: Arc<Tera>,
+}
+
+impl AppState {
+    pub fn new(repository: Repository, templates: Tera) -> Self {
+        Self {
+            repository: Arc::new(repository),
+            templates: Arc::new(templates),
+        }
+    }
 }
 
 #[tokio::main]
-async fn main() {
-    // Initialize your AppState here
-    let state = AppState {
-        // Initialize your state
-    };
+async fn main() -> anyhow::Result<()> {
+    // Initialize your repository here
+    let repository = Repository::new(/* your database connection */);
 
-    let app = router::create_router(state);
+    let app = server::create_app(repository)?;
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    println!("Server listening on {}", addr);
+    println!("Server starting on http://127.0.0.1:3000");
+    server::start(app, "127.0.0.1", 3000).await?;
 
-    Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    Ok(())
 }
