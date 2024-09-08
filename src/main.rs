@@ -1,14 +1,18 @@
+use std::sync::Arc;
+use domain::{db, repository::Repository};
+
 mod config;
 
-use config::Config;
+use crate::config::Config;
 
-fn main() {
-    match Config::new() {
-        Ok(config) => {
-            println!("Server config: {:?}", config.server);
-            println!("Database config: {:?}", config.database);
-            println!("Logging config: {:?}", config.logging);
-        },
-        Err(e) => eprintln!("Failed to load config: {}", e),
-    }
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    let config = Config::new().expect("Failed to load config");
+
+    let conn = Arc::new(db::initialize(&config.database.url).await?);
+    let repository = Repository::new(conn);
+
+    // You can now use the `repository` for database operations
+
+    Ok(())
 }
