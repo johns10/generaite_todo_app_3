@@ -7,3 +7,12 @@
 
 # 2024-09-08 13:46:35.477396
 +impl AppConfig {
+
+# 2024-09-08 13:48:18.371034
++Create config files for the test/dev/prod environments.
+
+# 2024-09-08 13:48:53.569357
++/run cargo add toml
+
+# 2024-09-08 13:49:03.256954
++/run RUST_ENV=dev cargo run

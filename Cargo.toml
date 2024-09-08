@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.87"
-config = "0.14.0"
+config = { version = "0.14.0", features = ["toml"] }
 dotenvy = "0.15.7"
 sea-orm = { version = "1.0.1", features = ["runtime-tokio-native-tls", "sqlx-postgres"] }
 serde = { version = "1.0.210", features = ["derive"] }
