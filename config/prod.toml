@@ -1,0 +1,10 @@
+[server]
+host = "0.0.0.0"
+port = 80
+
+[database]
+url = "postgres://user:password@production-db-host/prod_db"
+max_connections = 100
+
+[logging]
+level = "warn"

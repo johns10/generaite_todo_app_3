@@ -1,0 +1,10 @@
+[server]
+host = "127.0.0.1"
+port = 8080
+
+[database]
+url = "postgres://user:password@localhost/dev_db"
+max_connections = 10
+
+[logging]
+level = "info"
