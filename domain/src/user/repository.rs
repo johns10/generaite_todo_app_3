@@ -1,7 +1,7 @@
 use crate::user::model::{User, UserForm};
 use async_trait::async_trait;
 use entity::user;
-use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, Set, QueryFilter, ColumnTrait};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, Set};
 use std::sync::Arc;
 use uuid::Uuid;
 use thiserror::Error;
@@ -15,6 +15,12 @@ pub enum UserRepositoryError {
 }
 
 pub type Result<T> = std::result::Result<T, UserRepositoryError>;
+
+impl From<sea_orm::DbErr> for UserRepositoryError {
+    fn from(err: sea_orm::DbErr) -> Self {
+        UserRepositoryError::DatabaseError(err)
+    }
+}
 
 #[async_trait]
 pub trait UserRepositoryTrait: Send + Sync {
