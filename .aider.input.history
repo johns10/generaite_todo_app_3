@@ -275,3 +275,21 @@
 # 2024-09-08 14:37:26.459975
 +Update the src/main.rs file to create app_state and start the web server 
 +https://github.com/johns10/axum_example/blob/main/src/main.rs
+
+# 2024-09-08 16:37:01.450944
++/add migration/src/m20220101_000001_create_table.rs
+
+# 2024-09-08 16:37:46.340182
++Add a migration for the user table, use the included migration file as a reference https://github.com/johns10/axum_example/blob/main/migration/src/m20220120_000001_create_post_table.rs
+
+# 2024-09-08 16:39:35.848475
++/test cargo test --workspace
+
+# 2024-09-08 16:39:58.940003
++/add migration/src/m20220101_000001_create_user_table.rs
+
+# 2024-09-08 16:40:08.810349
++/test cargo test --workspace
+
+# 2024-09-08 16:40:26.879666
++/run cargo test --workspace
