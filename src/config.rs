@@ -1,10 +1,13 @@
 use serde::Deserialize;
+use std::fs;
 use std::env;
+use toml;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub server: ServerConfig,
     pub database: DatabaseConfig,
+    pub logging: LoggingConfig,
 }
 
 #[derive(Debug, Deserialize)]
@@ -16,26 +19,20 @@ pub struct ServerConfig {
 #[derive(Debug, Deserialize)]
 pub struct DatabaseConfig {
     pub url: String,
-    pub pool_size: u32,
+    pub max_connections: u32,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct LoggingConfig {
+    pub level: String,
 }
 
 impl Config {
-    pub fn from_env() -> Result<Self, env::VarError> {
-        Ok(Config {
-            server: ServerConfig {
-                host: env::var("SERVER_HOST").unwrap_or_else(|_| "127.0.0.1".to_string()),
-                port: env::var("SERVER_PORT")
-                    .unwrap_or_else(|_| "8080".to_string())
-                    .parse()
-                    .expect("Invalid SERVER_PORT"),
-            },
-            database: DatabaseConfig {
-                url: env::var("DATABASE_URL")?,
-                pool_size: env::var("DATABASE_POOL_SIZE")
-                    .unwrap_or_else(|_| "10".to_string())
-                    .parse()
-                    .expect("Invalid DATABASE_POOL_SIZE"),
-            },
-        })
+    pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
+        let environment = env::var("RUST_ENV").unwrap_or_else(|_| "dev".to_string());
+        let config_path = format!("config/{}.toml", environment);
+        let config_str = fs::read_to_string(config_path)?;
+        let config: Config = toml::from_str(&config_str)?;
+        Ok(config)
     }
 }
