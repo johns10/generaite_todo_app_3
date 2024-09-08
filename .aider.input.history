@@ -1,0 +1,9 @@
+
+# 2024-09-08 13:46:24.901632
++Create a new file src/config.rs that contains all the configurations necessary to run a web server and connect to a database, in this form:
+
+# 2024-09-08 13:46:33.553319
++/run cargo add serde --features derive
+
+# 2024-09-08 13:46:35.477396
++impl AppConfig {
