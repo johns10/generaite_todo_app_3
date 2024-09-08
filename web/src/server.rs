@@ -1,18 +1,18 @@
-use crate::{router, AppState};
-use axum::Router;
+mod app_state;
+mod router;
+mod server;
+
+use app_state::AppState;
 use domain::repository::Repository;
-use tera::Tera;
+use server::{create_app, start};
 
-pub fn create_app(repository: Repository) -> anyhow::Result<Router> {
-    let templates = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*"))
-        .expect("Tera initialization failed");
-    let state = AppState::new(repository, templates);
-    Ok(router::create_router(state))
-}
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    // Initialize your repository here
+    let repository = Repository::new(/* your database connection */);
 
-pub async fn start(app: Router, host: &str, port: u16) -> anyhow::Result<()> {
-    let server_url = format!("{host}:{port}");
-    let listener = tokio::net::TcpListener::bind(&server_url).await?;
-    axum::serve(listener, app).await?;
+    let app = create_app(repository)?;
+    start(app, "127.0.0.1", 8080).await?;
+
     Ok(())
 }
