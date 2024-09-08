@@ -41,3 +41,69 @@
 
 # 2024-09-08 14:03:07.390366
 +/run cargo run --bin domain
+
+# 2024-09-08 14:14:28.549716
++/drop domain/Cargo.toml
+
+# 2024-09-08 14:14:34.181374
++/add src/main.rs
+
+# 2024-09-08 14:14:39.191347
++/add domain/src/repository.rs
+
+# 2024-09-08 14:14:43.841444
++/ls
+
+# 2024-09-08 14:15:07.856293
++This guide will walk you through the process of setting up the database connection and repository in your src/main.rs file, focusing on the SeaORM setup without the Axum-specific parts.
++Step 1: Import Required Dependencies
++First, ensure you have the necessary imports at the top of your src/main.rs file:
++rustCopyuse std::sync::Arc;
++use domain::{db, repository::Repository};
++
++mod config;
++
++use crate::config::Settings;
++Step 2: Set Up the Database Connection
++Inside your main function, add the following code to establish the database connection:
++rustCopy#[tokio::main]
++async fn main() -> anyhow::Result<()> {
++    let settings = Settings::new().expect("Failed to load settings");
++
++    let conn = Arc::new(db::initialize(&settings.database_url).await?);
++    // ... rest of the main function
++}
++This code does the following:
++
++Loads the application settings (including the database URL)
++Initializes the database connection using the db::initialize function
++Wraps the connection in an Arc for safe sharing across threads
++
++Step 3: Create the Repository
++After setting up the connection, create the repository:
++rustCopylet repository = Repository::new(conn);
++This line creates a new Repository instance using the database connection.
++Complete main.rs Example
++Here's how your src/main.rs file should look with just the database and repository setup:
++rustCopyuse std::sync::Arc;
++use domain::{db, repository::Repository};
++
++mod config;
++
++use crate::config::Settings;
++
++#[tokio::main]
++async fn main() -> anyhow::Result<()> {
++    let settings = Settings::new().expect("Failed to load settings");
++
++    let conn = Arc::new(db::initialize(&settings.database_url).await?);
++    let repository = Repository::new(conn);
++
++    // You can now use the `repository` for database operations
++
++    Ok(())
++}
++
+
+# 2024-09-08 14:15:27.908887
++/run cargo run

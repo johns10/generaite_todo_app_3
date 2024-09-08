@@ -1049,11 +1049,13 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "config",
+ "domain",
  "dotenvy",
  "sea-orm",
  "serde",
  "serde_json",
  "tera",
+ "tokio",
  "toml",
 ]
 
