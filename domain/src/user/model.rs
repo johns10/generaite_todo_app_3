@@ -1,5 +1,6 @@
 use chrono::{DateTime, NaiveDateTime, Utc};
 use entity::user;
+use sea_orm::ActiveValue;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -26,6 +27,18 @@ impl From<user::Model> for User {
             email: model.email,
             created_at: naive_to_utc(model.created_at),
             updated_at: naive_to_utc(model.updated_at),
+        }
+    }
+}
+
+impl From<user::ActiveModel> for User {
+    fn from(active_model: user::ActiveModel) -> Self {
+        Self {
+            id: active_model.id.unwrap(),
+            username: active_model.username.unwrap(),
+            email: active_model.email.unwrap(),
+            created_at: naive_to_utc(active_model.created_at.unwrap()),
+            updated_at: naive_to_utc(active_model.updated_at.unwrap()),
         }
     }
 }
