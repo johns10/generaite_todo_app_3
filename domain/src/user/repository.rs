@@ -16,12 +16,6 @@ pub enum UserRepositoryError {
 
 pub type Result<T> = std::result::Result<T, UserRepositoryError>;
 
-impl From<sea_orm::DbErr> for UserRepositoryError {
-    fn from(err: sea_orm::DbErr) -> Self {
-        UserRepositoryError::DatabaseError(err)
-    }
-}
-
 #[async_trait]
 pub trait UserRepositoryTrait: Send + Sync {
     async fn create(&self, form: UserForm) -> Result<User>;
