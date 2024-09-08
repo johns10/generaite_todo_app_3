@@ -1,7 +1,7 @@
 use crate::user::model::{User, UserForm};
+use ::entity::user;
 use async_trait::async_trait;
-use entity::user;
-use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, Set};
+use sea_orm::*;
 use std::sync::Arc;
 use thiserror::Error;
 use uuid::Uuid;
@@ -14,30 +14,28 @@ pub enum UserRepositoryError {
     NotFound,
 }
 
-pub type Result<T> = std::result::Result<T, UserRepositoryError>;
-
 #[async_trait]
-pub trait UserRepositoryTrait: Send + Sync {
-    async fn create(&self, form: UserForm) -> Result<User>;
-    async fn get(&self, id: Uuid) -> Result<User>;
-    async fn update(&self, id: Uuid, form: UserForm) -> Result<User>;
-    async fn delete(&self, id: Uuid) -> Result<()>;
-    async fn list(&self) -> Result<Vec<User>>;
+pub trait UserRepository: Send + Sync {
+    async fn create(&self, form: UserForm) -> Result<User, UserRepositoryError>;
+    async fn get(&self, id: Uuid) -> Result<User, UserRepositoryError>;
+    async fn update(&self, id: Uuid, form: UserForm) -> Result<User, UserRepositoryError>;
+    async fn delete(&self, id: Uuid) -> Result<u64, UserRepositoryError>;
+    async fn list(&self) -> Result<Vec<User>, UserRepositoryError>;
 }
 
-pub struct UserRepository {
+pub struct UserRepositoryImpl {
     conn: Arc<DatabaseConnection>,
 }
 
-impl UserRepository {
+impl UserRepositoryImpl {
     pub fn new(conn: Arc<DatabaseConnection>) -> Self {
         Self { conn }
     }
 }
 
 #[async_trait]
-impl UserRepositoryTrait for UserRepository {
-    async fn create(&self, form: UserForm) -> Result<User> {
+impl UserRepository for UserRepositoryImpl {
+    async fn create(&self, form: UserForm) -> Result<User, UserRepositoryError> {
         let user = user::ActiveModel {
             id: Set(Uuid::new_v4()),
             username: Set(form.username),
@@ -51,7 +49,7 @@ impl UserRepositoryTrait for UserRepository {
         Ok(User::from(user))
     }
 
-    async fn get(&self, id: Uuid) -> Result<User> {
+    async fn get(&self, id: Uuid) -> Result<User, UserRepositoryError> {
         let user = user::Entity::find_by_id(id)
             .one(&*self.conn)
             .await?
@@ -59,7 +57,7 @@ impl UserRepositoryTrait for UserRepository {
         Ok(User::from(user))
     }
 
-    async fn update(&self, id: Uuid, form: UserForm) -> Result<User> {
+    async fn update(&self, id: Uuid, form: UserForm) -> Result<User, UserRepositoryError> {
         let mut user: user::ActiveModel = user::Entity::find_by_id(id)
             .one(&*self.conn)
             .await?
@@ -74,15 +72,15 @@ impl UserRepositoryTrait for UserRepository {
         Ok(User::from(updated_user))
     }
 
-    async fn delete(&self, id: Uuid) -> Result<()> {
-        let result = user::Entity::delete_by_id(id).exec(&*self.conn).await?;
-        if result.rows_affected == 0 {
-            return Err(UserRepositoryError::NotFound);
-        }
-        Ok(())
+    async fn delete(&self, id: Uuid) -> Result<u64, UserRepositoryError> {
+        let result = user::Entity::delete_by_id(id)
+            .exec(self.conn.as_ref())
+            .await
+            .map(|res| res.rows_affected)
+            .map_err(UserRepositoryError::from);
     }
 
-    async fn list(&self) -> Result<Vec<User>> {
+    async fn list(&self) -> Result<Vec<User>, UserRepositoryError> {
         let users = user::Entity::find().all(&*self.conn).await?;
         Ok(users.into_iter().map(User::from).collect())
     }
