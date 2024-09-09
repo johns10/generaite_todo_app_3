@@ -385,3 +385,6 @@
 
 # 2024-09-08 19:21:21.609676
 +/test cargo test
+
+# 2024-09-08 19:29:28.285206
++Perform the service implementation for user. FOllow the included example https://github.com/johns10/axum_example/blob/main/domain/src/post/service.rs We are doing a repository pattern implementation. Note that the trait is implemented in the repository and that we don't need to implement a trait here.
